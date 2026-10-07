@@ -1,0 +1,42 @@
+### Mitarbeiter anlegen
+POST http://localhost:8080/api/mitarbeiter
+Content-Type: application/json
+
+{
+  "name": "Max Muster",
+  "bruttoGehalt": 3500.00
+}
+
+### Alle Mitarbeiter abrufen
+GET http://localhost:8080/api/mitarbeiter
+
+### Ungültig: Gehalt fehlt
+POST http://localhost:8080/api/mitarbeiter
+Content-Type: application/json
+
+{
+  "name": "Ohne Gehalt"
+}
+
+### 2. Beitrag September buchen
+POST http://localhost:8080/api/mitarbeiter/1/beitraege?monat=2026-09
+
+### 3. Beitrag Oktober buchen
+POST http://localhost:8080/api/mitarbeiter/1/beitraege?monat=2026-10
+
+### 4. Kontostand abrufen
+GET http://localhost:8080/api/mitarbeiter/1/kontostand
+
+### 5. Fehlerfall: September doppelt buchen
+POST http://localhost:8080/api/mitarbeiter/1/beitraege?monat=2026-09
+
+### 6. Fehlerfall: Mitarbeiter existiert nicht
+POST http://localhost:8080/api/mitarbeiter/99/beitraege?monat=2026-09
+
+### 7. Fehlerfall: Gehalt fehlt
+POST http://localhost:8080/api/mitarbeiter
+Content-Type: application/json
+
+{
+  "name": "Ohne Gehalt"
+}
