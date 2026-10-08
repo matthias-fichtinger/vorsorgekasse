@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: vorsorgekasse-postgres
+    environment:
+      POSTGRES_DB: vorsorgekasse
+      POSTGRES_USER: vorsorge
+      POSTGRES_PASSWORD: vorsorge
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

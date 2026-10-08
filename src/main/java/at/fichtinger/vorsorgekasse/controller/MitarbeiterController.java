@@ -1,5 +1,7 @@
 package at.fichtinger.vorsorgekasse.controller;
 
+import at.fichtinger.vorsorgekasse.dto.MitarbeiterRequest;
+import at.fichtinger.vorsorgekasse.dto.MitarbeiterResponse;
 import at.fichtinger.vorsorgekasse.entity.Mitarbeiter;
 import at.fichtinger.vorsorgekasse.service.MitarbeiterService;
 import jakarta.validation.Valid;
@@ -17,12 +19,12 @@ public class MitarbeiterController {
     }
 
     @PostMapping
-    public Mitarbeiter anlegen(@Valid @RequestBody Mitarbeiter m){
-        return service.anlegen(m);
+    public MitarbeiterResponse anlegen(@Valid @RequestBody MitarbeiterRequest request){
+        return service.anlegen(request);
     }
 
     @GetMapping
-    public List<Mitarbeiter> alle(){
+    public List<MitarbeiterResponse> alle(){
         return service.alle();
     }
 }

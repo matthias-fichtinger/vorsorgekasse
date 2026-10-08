@@ -1,5 +1,7 @@
 package at.fichtinger.vorsorgekasse.service;
 
+import at.fichtinger.vorsorgekasse.dto.BeitragResponse;
+import at.fichtinger.vorsorgekasse.dto.KontostandResponse;
 import at.fichtinger.vorsorgekasse.entity.Beitrag;
 import at.fichtinger.vorsorgekasse.entity.Mitarbeiter;
 import at.fichtinger.vorsorgekasse.repository.BeitragRepository;
@@ -38,9 +40,9 @@ class BeitragServiceTest {
         when(mitarbeiterRepository.findById(1L)).thenReturn(Optional.of(m));
         when(beitragRepository.save(any(Beitrag.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Beitrag b = beitragService.buchen(1L, YearMonth.of(2026,9));
+        BeitragResponse b = beitragService.buchen(1L, YearMonth.of(2026,9));
 
-        assertEquals(new BigDecimal("53.55"), b.getBetrag());
+        assertEquals(new BigDecimal("53.55"), b.betrag());
     }
 
     @Test
@@ -71,14 +73,14 @@ class BeitragServiceTest {
         b1.setBetrag(new BigDecimal("53.55"));
         b2.setBetrag(new BigDecimal("53.55"));
         when(beitragRepository.findByMitarbeiterId(any())).thenReturn(List.of(b1,b2));
-        BigDecimal kontostand = beitragService.kontostand(1L);
-        assertEquals(new BigDecimal("107.10"), kontostand);
+        KontostandResponse kontostand = beitragService.kontostand(1L);
+        assertEquals(new BigDecimal("107.10"), kontostand.kontostand());
     }
 
     @Test
     void kontostand_keineBeitraege(){
         when(beitragRepository.findByMitarbeiterId(1L)).thenReturn(List.of());
-        BigDecimal kontostand = beitragService.kontostand(1L);
-        assertEquals(BigDecimal.ZERO, kontostand);
+        KontostandResponse kontostand = beitragService.kontostand(1L);
+        assertEquals(BigDecimal.ZERO, kontostand.kontostand());
     }
 }

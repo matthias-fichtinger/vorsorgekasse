@@ -1,5 +1,7 @@
 package at.fichtinger.vorsorgekasse.controller;
 
+import at.fichtinger.vorsorgekasse.dto.BeitragResponse;
+import at.fichtinger.vorsorgekasse.dto.KontostandResponse;
 import at.fichtinger.vorsorgekasse.entity.Beitrag;
 import at.fichtinger.vorsorgekasse.service.BeitragService;
 import org.springframework.stereotype.Controller;
@@ -20,12 +22,12 @@ public class BeitragController {
     }
 
     @PostMapping("beitraege")
-    public Beitrag anlegen(@PathVariable Long id, @RequestParam YearMonth monat){
+    public BeitragResponse anlegen(@PathVariable Long id, @RequestParam YearMonth monat){
         return  service.buchen(id,monat);
     }
 
     @GetMapping("/kontostand")
-    public BigDecimal kontostand(@PathVariable Long id){
+    public KontostandResponse kontostand(@PathVariable Long id){
         return service.kontostand(id);
     }
 }
