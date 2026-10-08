@@ -4,6 +4,7 @@ import at.fichtinger.vorsorgekasse.dto.BeitragResponse;
 import at.fichtinger.vorsorgekasse.dto.KontostandResponse;
 import at.fichtinger.vorsorgekasse.entity.Beitrag;
 import at.fichtinger.vorsorgekasse.entity.Mitarbeiter;
+import at.fichtinger.vorsorgekasse.event.BeitragGebuchtEvent;
 import at.fichtinger.vorsorgekasse.repository.BeitragRepository;
 import at.fichtinger.vorsorgekasse.repository.MitarbeiterRepository;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,6 +32,8 @@ class BeitragServiceTest {
     BeitragRepository beitragRepository;
     @Mock
     MitarbeiterRepository mitarbeiterRepository;
+    @Mock
+    ApplicationEventPublisher eventPublisher;
     @InjectMocks
     BeitragService beitragService;
 
@@ -43,6 +47,7 @@ class BeitragServiceTest {
         BeitragResponse b = beitragService.buchen(1L, YearMonth.of(2026,9));
 
         assertEquals(new BigDecimal("53.55"), b.betrag());
+        verify(eventPublisher).publishEvent((any(BeitragGebuchtEvent.class)));
     }
 
     @Test
@@ -55,6 +60,7 @@ class BeitragServiceTest {
         ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> beitragService.buchen(1L,YearMonth.of(2026,9)));
         assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
         verify(beitragRepository, never()).save(any());
+        verify(eventPublisher,never()).publishEvent(any());
     }
 
     @Test

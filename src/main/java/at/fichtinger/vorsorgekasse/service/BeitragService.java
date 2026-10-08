@@ -4,8 +4,11 @@ import at.fichtinger.vorsorgekasse.dto.BeitragResponse;
 import at.fichtinger.vorsorgekasse.dto.KontostandResponse;
 import at.fichtinger.vorsorgekasse.entity.Beitrag;
 import at.fichtinger.vorsorgekasse.entity.Mitarbeiter;
+import at.fichtinger.vorsorgekasse.event.BeitragGebuchtEvent;
 import at.fichtinger.vorsorgekasse.repository.BeitragRepository;
 import at.fichtinger.vorsorgekasse.repository.MitarbeiterRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,12 +25,15 @@ public class BeitragService {
 
     private final BeitragRepository beitragRepo;
     private final MitarbeiterRepository mitarbeiterRepo;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public BeitragService(BeitragRepository beitragRepo, MitarbeiterRepository mitarbeiterRepo) {
+    public BeitragService(BeitragRepository beitragRepo, MitarbeiterRepository mitarbeiterRepo, ApplicationEventPublisher eventPublisher) {
         this.beitragRepo = beitragRepo;
         this.mitarbeiterRepo = mitarbeiterRepo;
+        this.eventPublisher = eventPublisher;
     }
 
+    @Transactional
     public BeitragResponse buchen(Long mitarbeiterId, YearMonth monat){
         Mitarbeiter m = mitarbeiterRepo.findById(mitarbeiterId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Mitarbeiter nicht gefunden"));
         LocalDate ersterDesMonats = monat.atDay(1);
@@ -40,6 +46,7 @@ public class BeitragService {
         b.setMonat(ersterDesMonats);
         b.setBetrag(m.getBruttoGehalt().multiply(BEITRAGSSATZ).setScale(2, RoundingMode.HALF_UP));
         Beitrag gespeichert = beitragRepo.save(b);
+        eventPublisher.publishEvent(BeitragGebuchtEvent.of(mitarbeiterId, gespeichert.getMonat(), gespeichert.getBetrag()));
         return new BeitragResponse(gespeichert.getId(), mitarbeiterId,
                 gespeichert.getMonat(), gespeichert.getBetrag());
     }

@@ -23,7 +23,7 @@ public class BeitragController {
 
     @PostMapping("beitraege")
     public BeitragResponse anlegen(@PathVariable Long id, @RequestParam YearMonth monat){
-        return  service.buchen(id,monat);
+        return service.buchen(id,monat);
     }
 
     @GetMapping("/kontostand")
