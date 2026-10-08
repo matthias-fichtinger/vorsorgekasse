@@ -41,6 +41,7 @@ public class BeitragService {
     }
 
     public BigDecimal kontostand(Long mitarbeiterId){
-       return beitragRepo.findByMitarbeiterId(mitarbeiterId).stream().map(Beitrag::getBetrag).reduce(BigDecimal.ZERO,BigDecimal::add);
+        return beitragRepo.findByMitarbeiterId(mitarbeiterId).stream().map(Beitrag::getBetrag).reduce(BigDecimal.ZERO,BigDecimal::add);
     }
 }
+
